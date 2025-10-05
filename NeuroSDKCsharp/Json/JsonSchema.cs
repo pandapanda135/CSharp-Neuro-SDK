@@ -1,15 +1,18 @@
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace NeuroSDKCsharp.Json;
 
 public sealed class JsonSchema
 {
+    [JsonIgnore]
     public Dictionary<string, JsonSchema> Properties
     {
         get => _properties ??= new Dictionary<string, JsonSchema>();
         set => _properties = value;
     }
 
+    [JsonIgnore]
     public JsonSchemaType Type
     {
         get
@@ -42,12 +45,14 @@ public sealed class JsonSchema
         }
     }
 
+    [JsonIgnore]
     public List<object> Enum
     {
         get => _enum ??= new List<object>();
         set => _enum = value;
     }
 
+    [JsonIgnore]
     public List<string> Required
     {
         get => _required ??= new List<string>();
