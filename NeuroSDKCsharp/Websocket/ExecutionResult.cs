@@ -7,9 +7,9 @@ public class ExecutionResult
 
     public ExecutionResult(bool successful,string? message)
     {
-        if (String.IsNullOrEmpty(Message))
+        if (string.IsNullOrEmpty(message))
         {
-            Message = "";
+            message = "";
         }
 
         Successful = successful;
