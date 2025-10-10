@@ -1,10 +1,10 @@
-using System.Collections;
 using NeuroSDKCsharp.Messages.Outgoing;
+using NeuroSDKCsharp.Utilities;
 using NeuroSDKCsharp.Websocket;
 
 namespace NeuroSDKCsharp.Actions;
 
-public sealed class NeuroActionHandler
+public static class NeuroActionHandler
 {
     private static List<INeuroAction> _currentRegisteredActions = new();
     private static readonly List<INeuroAction> DyingActions = new();
@@ -13,12 +13,6 @@ public sealed class NeuroActionHandler
         _currentRegisteredActions.FirstOrDefault(a => a.Name == name);
 
     public static bool IsRecentlyUnregistered(string name) => DyingActions.Any(a => a.Name == name);
-
-    private async Task OnApplicationQuit() // TODO: hook this up to Game.Exit()
-    { 
-        await WebsocketHandler.Instance!.SendImmediate(new ActionsUnregister(_currentRegisteredActions));
-        _currentRegisteredActions = null!;
-    }
 
     public static void RegisterActions(IReadOnlyCollection<INeuroAction> newActions)
     {
@@ -65,4 +59,13 @@ public sealed class NeuroActionHandler
         WebsocketHandler.Instance!.Send(new ActionsRegister(_currentRegisteredActions));
     }
     
+    public static void OnApplicationQuit(object? obj, EventArgs args)
+    {
+        ExitApplicationEvent.ApplicationExiting += OnApplicationQuit;
+        Task.Run(async () =>
+        {
+            await WebsocketHandler.Instance!.SendImmediate(new ActionsUnregister(_currentRegisteredActions));
+            _currentRegisteredActions = null!;
+        });
+    }
 }

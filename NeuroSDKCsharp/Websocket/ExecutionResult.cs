@@ -26,14 +26,13 @@ public class ExecutionResult
         return new ExecutionResult(false, message);
     }
     
-    // TODO: implement Strings to show who's fault it is 
     public static ExecutionResult ServerFailure(string? message)
     {
-        return Failure(message + " Server issue");
+        return Failure($"{message} {Strings.VedalFaultSuffix}");
     }
     
     public static ExecutionResult ModFailure(string? message)
     {
-        return Failure(message + " Mod failure");
+        return Failure($"{message} {Strings.ModFaultSuffix}");
     }
 }
