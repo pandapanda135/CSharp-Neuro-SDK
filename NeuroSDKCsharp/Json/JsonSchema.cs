@@ -82,15 +82,21 @@ public sealed class JsonSchema
     [JsonProperty("maxLength")]
     public int? MaxLength { get; set; }
 
+    /// <summary>
+    /// Add a maximum value to a "number" in a json schema, this does not allow for integers to have a maximum.
+    /// </summary>
     [JsonProperty("maximum")]
     public float? Maximum { get; set; }
-
+    
     [JsonProperty("exclusiveMinimum")]
     public float? ExclusiveMinimum { get; set; }
 
     [JsonProperty("exclusiveMaximum")]
     public float? ExclusiveMaximum { get; set; }
 
+    /// <summary>
+    /// Add a minimum value to a "number" in a json schema, this does not allow for integers to have a minimum.
+    /// </summary>
     [JsonProperty("minimum")]
     public float? Minimum { get; set; }
 

@@ -14,10 +14,10 @@ public sealed class Context : OutgoingMessageHandler
     
     protected override string Command => "context";
 
-    [JsonProperty("message")]
+    [JsonProperty("message", Order = 0)]
     private string _message;
 
-    [JsonProperty("silent")]
+    [JsonProperty("silent",Order = 10)]
     private bool _silent;
 
     public static void Send(string message, bool silent = false) =>

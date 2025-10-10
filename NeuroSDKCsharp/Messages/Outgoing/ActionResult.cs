@@ -15,12 +15,12 @@ public sealed class ActionResult : OutgoingMessageHandler
     
     protected override string Command => "action/result";
     
-    [JsonProperty("id")]
+    [JsonProperty("id", Order = 0)]
     private string _id;
 
-    [JsonProperty("success")]
+    [JsonProperty("success", Order = 10)]
     private bool _success;
 
-    [JsonProperty("message")]
+    [JsonProperty("message", Order = 20)]
     private string? _message;
 }
