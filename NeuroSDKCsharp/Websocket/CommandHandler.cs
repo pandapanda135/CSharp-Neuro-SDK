@@ -3,7 +3,7 @@ using NeuroSDKCsharp.Utilities;
 
 namespace NeuroSDKCsharp.Websocket;
 
-public class CommandHandler
+public sealed class CommandHandler
 {
     private readonly List<IIncomingMessageHandler?> _handlers = new();
 
@@ -12,7 +12,7 @@ public class CommandHandler
         _handlers.AddRange(ReflectionHelpers.GetAllInDomain<IIncomingMessageHandler>());
     }
 
-    public virtual void Handle(string command, IncomingData data)
+    public void Handle(string command, IncomingData data)
     {
         if (_handlers.Count == 0) Start();
         
