@@ -1,5 +1,6 @@
 using System.Net.WebSockets;
 using System.Text;
+using Microsoft.Xna.Framework;
 using NeuroSDKCsharp.Json;
 using NeuroSDKCsharp.Messages.API;
 using NeuroSDKCsharp.Utilities;
