@@ -7,7 +7,7 @@ internal static class ReflectionHelpers
     {
         public static IEnumerable<T> GetAllInDomain<T>()
         {
-            Console.WriteLine($"Running GetAllInDomain");
+            Logger.Info($"Running GetAllInDomain");
 
             IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => !assembly.FullName.Contains($"Steamworks")) // We remove steamworks to stop issues
                 .SelectMany(asm => asm.GetTypes())

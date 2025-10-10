@@ -1,3 +1,4 @@
+using NeuroSDKCsharp.Utilities;
 using Newtonsoft.Json.Linq;
 
 namespace NeuroSDKCsharp.Actions;
@@ -12,11 +13,7 @@ public class ActionData
 
     private void DeserializeFromJson(string? stringData)
     {
-        if (string.IsNullOrEmpty(stringData))
-        {
-            stringData = null;
-            return;
-        }
+        if (string.IsNullOrEmpty(stringData)) return;
 
         Data = JToken.Parse(stringData);
     }
@@ -31,7 +28,7 @@ public class ActionData
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.Error($"error with parsing action data: {e}");
             actionData = null;
             return false;
         }

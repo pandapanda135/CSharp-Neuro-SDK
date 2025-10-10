@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using NeuroSDKCsharp.Messages.API;
 using NeuroSDKCsharp.Utilities;
 
@@ -6,7 +5,7 @@ namespace NeuroSDKCsharp.Websocket;
 
 public class CommandHandler
 {
-    private readonly List<IIncomingMessageHandler> _handlers = new();
+    private readonly List<IIncomingMessageHandler?> _handlers = new();
 
     private void Start() // this will need to be called manually as there is nothing similar
     {
@@ -16,44 +15,41 @@ public class CommandHandler
     public virtual void Handle(string command, IncomingData data)
     {
         if (_handlers.Count == 0) Start();
+        
         try
         {
-            foreach (IIncomingMessageHandler handler in _handlers)
+            foreach (var handler in _handlers.OfType<IIncomingMessageHandler>().Where(handler => handler.CanHandle(command)))
             {
-                Console.WriteLine($"Running CommandHandler foreach    {handler}");
-                if (!handler.CanHandle(command)) continue;
-
                 ExecutionResult validationResult;
                 object? resultData;
                 try
                 {
-                    Console.WriteLine($"CommandHandler running validation");
                     validationResult = handler.Validate(command, data, out resultData);
                 }
                 catch (Exception e)
                 {
                     validationResult = ExecutionResult.Failure($"Issue with message handling {e.Message}");
-                    Console.WriteLine(e);
+                    Logger.Error($"Error in command handling: {e}");
                     resultData = null;  
                 }
 
                 if (!validationResult.Successful)
                 {
-                    Console.WriteLine("Unsuccessful execution result when handling message");
+                    Logger.Warning("Unsuccessful execution result when handling message");
                 }
             
                 handler.ReportResult(resultData, validationResult);
 
                 if (validationResult.Successful)
                 {
-                    Console.WriteLine($"CommandHandler validation successful");
+                    Logger.Info($"CommandHandler validation successful");
                     handler.Execute(resultData);
                 }
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Issue in Handle \n  {e}");
+            Logger.Error($"Issue in Handle\n  {e}");
             throw;
         }
         

@@ -10,7 +10,7 @@ public sealed class ActionWindow : GameComponent
     private static Game? _game;
     #region Create
 
-    private static bool _createdCorrectly = false;
+    private static bool _createdCorrectly;
 
     private ActionWindow(Game gameClass) : base(gameClass)
     {
@@ -29,7 +29,7 @@ public sealed class ActionWindow : GameComponent
         catch (Exception e)
         {
             _createdCorrectly = false;
-            Console.WriteLine(e);
+            Logger.Error($"Issue with creating action window: {e}");
             throw;
         }
     }
@@ -37,7 +37,7 @@ public sealed class ActionWindow : GameComponent
     {
         if (!_createdCorrectly)
         {
-            Console.WriteLine($"ActionWindow was not created correctly, you should use the Create method");
+            Logger.Error($"ActionWindow was not created correctly, you should use the Create method");
             Dispose();
         }
     }
@@ -60,7 +60,7 @@ public sealed class ActionWindow : GameComponent
     {
         if (CurrentState != State.Building)
         {
-            Console.WriteLine("Cannot change action window after it has been registered");
+            Logger.Error("Cannot change action window after it has been registered");
             return false;
         }
 
@@ -74,13 +74,13 @@ public sealed class ActionWindow : GameComponent
     {
         if (CurrentState != State.Building)
         {
-            Console.WriteLine("Cannot register action window more than once");
+            Logger.Error("Cannot register action window more than once");
             return;
         }
 
         if (_actions.Count == 0)
         {
-            Console.WriteLine("Cannot register action window with not actions");
+            Logger.Error("Cannot register an action window with no actions");
             return;
         }
 
@@ -130,7 +130,7 @@ public sealed class ActionWindow : GameComponent
         {
             if (action.ActionWindow != this)
             {
-                Console.WriteLine($"Cannot add action {action.Name} to this action window as it is already in another action window");
+                Logger.Error($"Cannot add action {action.Name} to this action window as it is already in another action window");
             }
 
             return this;
@@ -140,7 +140,7 @@ public sealed class ActionWindow : GameComponent
 
         if (_actions.Any(a => a.Name == action.Name))
         {
-            Console.WriteLine($"Cannot add two action that have the same name. The name was {action.Name}");
+            Logger.Error($"Cannot add two action that have the same name. The name was {action.Name}");
             return this;
         }
         
@@ -262,7 +262,7 @@ public sealed class ActionWindow : GameComponent
     public void End()
     {
         if (CurrentState >= State.Ended) return;
-        Console.WriteLine($"Ending Actionwindow");
+        Logger.Info($"Ending action window");
         
         NeuroActionHandler.UnregisterActions(_actions);
         _shouldForceFunc = null;
@@ -285,11 +285,7 @@ public sealed class ActionWindow : GameComponent
         if (CurrentState >= State.Ended)
             throw new InvalidOperationException("Cannot handle a result after the Action window has ended");
 
-        if (result.Successful)
-        {
-            Console.WriteLine($"End in result successful");
-            End();
-        }
+        if (result.Successful) End();
         
         return result;
     }
@@ -305,7 +301,6 @@ public sealed class ActionWindow : GameComponent
     
         if (_shouldEndFunc != null && _shouldEndFunc())
         {
-            Console.WriteLine($"end in update");
             End();
         }
         Time.Update();

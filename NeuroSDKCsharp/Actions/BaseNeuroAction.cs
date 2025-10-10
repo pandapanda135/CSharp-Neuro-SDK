@@ -1,6 +1,6 @@
 using NeuroSDKCsharp.Json;
+using NeuroSDKCsharp.Utilities;
 using NeuroSDKCsharp.Websocket;
-using Newtonsoft.Json;
 
 namespace NeuroSDKCsharp.Actions;
 
@@ -19,13 +19,12 @@ public abstract class BaseNeuroAction : INeuroAction
 
     public virtual bool CanAddToActionWindow(ActionWindow actionWindow) => true;
 
-    ExecutionResult INeuroAction.Validate(ActionData actionData, out object? ResultData)
+    ExecutionResult INeuroAction.Validate(ActionData actionData, out object? resultData)
     {
-        ExecutionResult result = Validate(actionData, out ResultData);
+        ExecutionResult result = Validate(actionData, out resultData);
 
         if (ActionWindow != null)
         {
-            Console.WriteLine($"base neuro action validation running");
             return ActionWindow.Result(result);
         }
 
@@ -39,7 +38,7 @@ public abstract class BaseNeuroAction : INeuroAction
         return new WSAction(Name, Description, Schema);
     }
 
-    protected abstract ExecutionResult Validate(ActionData actionData, out object? ResultData);
+    protected abstract ExecutionResult Validate(ActionData actionData, out object? resultData);
     protected abstract void Execute(object? data);
 
     void INeuroAction.SetActionWindow(ActionWindow actionWindow)
@@ -48,7 +47,7 @@ public abstract class BaseNeuroAction : INeuroAction
         {
             if (ActionWindow != actionWindow)
             {
-                Console.WriteLine("Cannot set the action window for this action as it is already set");
+                Logger.Error("Cannot set the action window for this action as it is already set");
             }
             
             return;
