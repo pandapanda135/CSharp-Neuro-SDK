@@ -61,10 +61,10 @@ public class WebsocketHandler : GameComponent
         await Task.Delay(TimeSpan.FromSeconds(ReconnectInterval));
         await StartWs();
     }
-    
+
+    private Task? _connectTask;
     private async Task StartWs()
     {
-        Logger.Info("This is start of Ws");
         Instance = this;
         
         try
@@ -77,7 +77,6 @@ public class WebsocketHandler : GameComponent
             Logger.Error($"issue with closing websocket if already open: {e}");
             throw;
         }
-
 
         if (_uriString is null or "")
         {
@@ -100,11 +99,12 @@ public class WebsocketHandler : GameComponent
         
         try
         {
-            await _webSocket.ConnectAsync(websocketUri, CancellationToken.None);
+            _connectTask = _webSocket.ConnectAsync(websocketUri, CancellationToken.None);
+            _connectTask.Wait();
 
             Logger.Info($"Starting Task    Websocket state: {_webSocket.State}");
             
-            _ = Task.Run(ReceiveMessage);
+            _ = ReceiveMessage();
             _tryingReconnect = false;
         }
         catch (Exception e)
@@ -186,18 +186,23 @@ public class WebsocketHandler : GameComponent
 
             var memoryStreamArray = memoryStream.ToArray();
             var messageData = Encoding.UTF8.GetString(memoryStreamArray,0,memoryStreamArray.Length);
-            
-            GetMessage(messageData);
-        }
 
-        if (_webSocket.State != WebSocketState.Open)
-        {
-            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,"",CancellationToken.None);
+            await TaskDispatcher.SwitchToMainThread();
+            GetMessage(messageData);
         }
     }
 
     public override async void Update(GameTime gameTime)
     {
+        TaskDispatcher.RunPending();
+        if (_connectTask is not null && _connectTask.IsCompleted)
+        {
+            if (_connectTask.IsFaulted) Logger.Error("Failed to connect: " + _connectTask.Exception);
+            else Logger.Info("Connected successfully!");
+
+            _connectTask = null;
+        }
+        
         if (_webSocket is { State: WebSocketState.Closed or WebSocketState.Aborted or WebSocketState.CloseReceived or WebSocketState.CloseSent} or null) // Best I can get to OnClose event with default websocket :(
         {
             _ = Reconnect(true);
