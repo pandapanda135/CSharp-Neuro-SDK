@@ -1,9 +1,11 @@
 using System.Collections.Concurrent;
 
+namespace NeuroSDKCsharp.Utilities;
+
 /// <summary>
 /// This is here to replicate UniTask's SwitchToMainThread
 /// </summary>
-public static class TaskDispatcher
+internal static class TaskDispatcher
 {
 	private static readonly ConcurrentQueue<Action> Actions = new();
 	private static int _mainThreadId;
@@ -18,9 +20,9 @@ public static class TaskDispatcher
 		while (Actions.TryDequeue(out var action)) action();
 	}
 
-	public static bool IsMainThread => Environment.CurrentManagedThreadId == _mainThreadId;
+	private static bool IsMainThread => Environment.CurrentManagedThreadId == _mainThreadId;
 
-	public static void Post(Action action)
+	private static void Post(Action action)
 	{
 		Actions.Enqueue(action);
 	}
