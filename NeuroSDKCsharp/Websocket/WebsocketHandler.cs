@@ -33,9 +33,7 @@ public class WebsocketHandler : GameComponent
         private set => _instance = value;
     }
 
-    //  ws://localhost:8001/ws/
-
-    private ClientWebSocket? _webSocket = new ClientWebSocket();
+    private ClientWebSocket? _webSocket = new();
 
     public readonly string GameName; // will be used for Messages
     private readonly MessageQueue _messageQueue;
@@ -197,9 +195,9 @@ public class WebsocketHandler : GameComponent
         TaskDispatcher.RunPending();
         if (_connectTask is not null && _connectTask.IsCompleted)
         {
-            if (_connectTask.IsFaulted) Logger.Error("Failed to connect: " + _connectTask.Exception);
-            else Logger.Info("Connected successfully!");
+            Logger.Info(_connectTask.IsFaulted ? "Issue with connecting, trying again." : "Connected successfully!");
 
+            _tryingReconnect = false;
             _connectTask = null;
         }
         

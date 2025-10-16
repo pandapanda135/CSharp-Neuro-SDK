@@ -12,7 +12,7 @@ internal static class TaskDispatcher
 
 	public static void Initialize()
 	{
-		_mainThreadId = Thread.CurrentThread.ManagedThreadId;
+		_mainThreadId = Environment.CurrentManagedThreadId;
 	}
 
 	public static void RunPending()
