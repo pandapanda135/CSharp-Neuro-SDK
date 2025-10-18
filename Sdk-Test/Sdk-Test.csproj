@@ -22,8 +22,8 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.5-develop.8" />
-        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.5-develop.8" />
+        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4" />
+        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4-beta1" />
     </ItemGroup>
     <ItemGroup>
@@ -32,6 +32,7 @@
       </Reference>
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Content\bin\DesktopGL\Content\" />
       <Folder Include="Content\obj\DesktopGL\net8.0\Content\" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">

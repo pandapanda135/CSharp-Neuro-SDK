@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeuroSDKCsharp;
@@ -59,7 +58,6 @@ public class Game1 : Game
     
     protected override void Update(GameTime gameTime)
     {
-        // Console.WriteLine($"Amount of components: {this.Components.Count}");
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
