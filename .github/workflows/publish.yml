@@ -1,0 +1,57 @@
+name: Publish to GitHub Release
+
+on:
+  push:
+    tags:
+      - 'V*'
+      - 'MG-V*'
+  workflow_dispatch:
+    inputs:
+        tag:
+          description: 'Release tag (e.g. v1.2.3)'
+          required: true
+
+jobs:
+  publish-main:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: build
+        run: dotnet publish NeuroSDKCsharp/NeuroSDKCsharp.csproj -c Release -o out
+
+      - name: public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create $RELEASE_TAG out/*.dll
+  publish-mono-game:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: checkout:
+        run: git checkout $RELEASE_TAG
+
+      - name: build
+        run: dotnet publish NeuroSDKCsharp/NeuroSDKCsharp.csproj -c Release -o out
+
+      - name: public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create $RELEASE_TAG out/*.dll
