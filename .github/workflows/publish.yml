@@ -17,8 +17,7 @@ permissions:
 
 jobs:
   publish-main:
-    run: echo github.ref_name
-    if: startsWith(github.ref_name, 'V')
+    if: ${{ (github.event_name == 'push' && startsWith(github.ref_name, 'V')) || (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'V')) }}
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
@@ -39,7 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release create $RELEASE_TAG out/*.dll
   publish-mono-game:
-    if: startsWith(github.ref_name, 'MG-V')
+    if: ${{ (github.event_name == 'push' && startsWith(github.ref_name, 'MG-V')) || (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'MG-V')) }}
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
