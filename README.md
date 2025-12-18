@@ -15,7 +15,7 @@ While it should be able to be used with other frameworks or engines out of the b
 This implementation is heavily based on the [Unity SDK](https://github.com/VedalAI/neuro-game-sdk/tree/main/Unity) from the original [Neuro Game SDK](https://github.com/VedalAI/neuro-game-sdk).
 
 ## Installation
-There is currently no way to install this through NuGet and there are no plans too currently. To use this, you either have to, build it yourself or use a precompiled dll from the releases tab. The first option is recommended.
+There is currently no way to install this through NuGet and there are no plans too currently. To use this, you either have to, build it yourself or use a precompiled dll from the releases tab (The main branch is "V" whereas the Mono Game version is "MG-V"). The first option is recommended.
 ### Dependencies
 - [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
 #### MonoGame branch:
