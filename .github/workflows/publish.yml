@@ -30,6 +30,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: checkout
+        run: git switch $RELEASE_TAG --detach
+
       - name: build
         run: dotnet publish NeuroSDKCsharp/NeuroSDKCsharp.csproj -c Release -o out
 
@@ -52,7 +55,7 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: checkout
-        run: git checkout $RELEASE_TAG
+        run: git switch $RELEASE_TAG --detach
 
       - name: build
         run: dotnet publish NeuroSDKCsharp/NeuroSDKCsharp.csproj -c Release -o out
