@@ -11,8 +11,13 @@ on:
           description: 'Release tag (e.g. v1.2.3)'
           required: true
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   publish-main:
+    if: startsWith(github.ref_name, "V")
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
@@ -33,6 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release create $RELEASE_TAG out/*.dll
   publish-mono-game:
+    if: startsWith(github.ref_name, "MG-V")
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
