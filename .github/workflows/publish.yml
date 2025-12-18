@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   publish-main:
+    run: echo github.ref_name
     if: startsWith(github.ref_name, 'V')
     runs-on: ubuntu-latest
     env:
