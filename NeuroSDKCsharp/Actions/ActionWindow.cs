@@ -154,6 +154,7 @@ public sealed class ActionWindow
     private Func<string>? _forceQueryGetter;
     private Func<string?>? _forceStateGetter;
     private bool? _forceEphemeralContext;
+    private ForcePriority _priority;
     
     /// <summary>
     /// Specify a condition under which the actions will be forced
@@ -162,9 +163,10 @@ public sealed class ActionWindow
     /// <param name="queryGetter">A getter for the query of the action force, invoked at force-time</param>
     /// <param name="stateGetter">A getter for the state of the action force, invoked at force-time</param>
     /// <param name="ephemeralContext">If true the query and state won't be remembered after the action force is finished</param>
+    /// <param name="priority">Determines how urgently Neuro should respond to the action force when she is speaking, for specifics you can check the API spec.</param>
     /// <returns>itself for chaining</returns>
     public ActionWindow SetForce(Func<bool> shouldForce, Func<string> queryGetter, Func<string?> stateGetter,
-        bool ephemeralContext = false)
+        bool ephemeralContext = false, ForcePriority priority = ForcePriority.Low)
     {
         if (!ValidateFrozen()) return this;
 
@@ -172,6 +174,7 @@ public sealed class ActionWindow
         _forceQueryGetter = queryGetter;
         _forceStateGetter = stateGetter;
         _forceEphemeralContext = ephemeralContext;
+        _priority = priority;
 
         return this;
     }
@@ -181,9 +184,10 @@ public sealed class ActionWindow
     /// </summary>
     /// <param name="shouldForce">if this returns true, the actions will be forced</param>
     /// <param name="ephemeralContext">If true the query and state won't be remembered after the action force is finished</param>
+    /// <param name="priority">Determines how urgently Neuro should respond to the action force when she is speaking, for specifics you can check the API spec.</param>
     /// <returns>itself for chaining</returns>
-    public ActionWindow SetForce(Func<bool> shouldForce, string query, string? state, bool ephemeralContext = false) =>
-        SetForce(shouldForce, () => query, () => state, ephemeralContext);
+    public ActionWindow SetForce(Func<bool> shouldForce, string query, string? state, bool ephemeralContext = false, ForcePriority priority = ForcePriority.Low) =>
+        SetForce(shouldForce, () => query, () => state, ephemeralContext, priority);
     
     /// <summary>
     /// specify a time in seconds after which the actions should be forced
@@ -192,13 +196,14 @@ public sealed class ActionWindow
     /// <param name="queryGetter">A getter for the query of the action force, invoked at force-time</param>
     /// <param name="stateGetter">A getter for the state of the action force, invoked at force-time</param>
     /// <param name="ephemeralContext">if true, the query and state won't be remembered after the action force is finished</param>
+    /// <param name="priority">Determines how urgently Neuro should respond to the action force when she is speaking, for specifics you can check the API spec.</param>
     /// <returns>itself for chaining</returns>
     public ActionWindow SetForce(float afterSeconds, Func<string> queryGetter, Func<string?> stateGetter,
-        bool ephemeralContext = false)
+        bool ephemeralContext = false, ForcePriority priority = ForcePriority.Low)
     {
         float startTime = Time.ElapsedTime;
         
-        return SetForce(ShouldForce, queryGetter, stateGetter, ephemeralContext);
+        return SetForce(ShouldForce, queryGetter, stateGetter, ephemeralContext, priority);
 
         bool ShouldForce()
         {
@@ -211,9 +216,10 @@ public sealed class ActionWindow
     /// </summary>
     /// <param name="afterSeconds">Time till the action is forced</param>
     /// <param name="ephemeralContext">if true the query and state won't be remembered after the action force is finished</param>
+    /// <param name="priority">Determines how urgently Neuro should respond to the action force when she is speaking, for specifics you can check the API spec.</param>
     /// <returns>itself for chaining</returns>
-    public ActionWindow SetForce(float afterSeconds, string query, string? state, bool ephemeralContext = false) =>
-        SetForce(afterSeconds, () => query,() => state, ephemeralContext);
+    public ActionWindow SetForce(float afterSeconds, string query, string? state, bool ephemeralContext = false, ForcePriority priority = ForcePriority.Low) =>
+        SetForce(afterSeconds, () => query,() => state, ephemeralContext, priority);
 
     public void Force()
     {
@@ -221,7 +227,7 @@ public sealed class ActionWindow
 
         CurrentState = State.Forced;
         _shouldForceFunc = null;
-        WebsocketHandler.Instance!.Send(new ActionsForce(_forceQueryGetter!(), _forceStateGetter!(), _forceEphemeralContext,_actions));
+        WebsocketHandler.Instance!.Send(new ActionsForce(_forceQueryGetter!(), _forceStateGetter!(), _forceEphemeralContext, _actions, _priority));
     }
     #endregion
 
