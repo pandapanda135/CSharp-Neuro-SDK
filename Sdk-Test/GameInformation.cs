@@ -130,7 +130,7 @@ public class GameInformation(Game gameClass) : GameComponent(gameClass)
 
         ActionWindow window = ActionWindow.Create(Game)
             .SetForce(5, "It is now your turn. Please pick a choice.",
-                $"Your opponent just did their turn, now it is time for you to do yours", false)
+                $"Your opponent just did their turn, now it is time for you to do yours", false, ForcePriority.Critical)
             .AddAction(new ServerChoice(this));
         window.Register();
     }

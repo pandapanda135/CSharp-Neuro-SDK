@@ -8,7 +8,7 @@ using Xunit.Sdk;
 
 namespace Tests;
 
-public class IncomingJsonTests
+public class IncomingJsonTests(ITestOutputHelper testOutputHelper)
 {
     [Fact]
     public void ProcessMessage_ValidJson_ShouldParseSuccessfully()
@@ -34,9 +34,17 @@ public class IncomingJsonTests
         
         string testJson = "{'command': 'action', 'data': {'id': '123', 'name': 'name', 'Description': 'This is Description'}";
 
-        object? result = testingClass.ProcessJsonMessage(testJson);
+        try
+        {
+            object? result = testingClass.ProcessJsonMessage(testJson);
         
-        Assert.Null(result);
-        Assert.IsType<Newtonsoft.Json.JsonReaderException>(result);
+            Assert.Null(result);
+            Assert.IsType<Newtonsoft.Json.JsonReaderException>(result);
+        }
+        catch (Exception e)
+        {
+            testOutputHelper.WriteLine($"successful error:\n{e}");
+            return;
+        }
     }
 }

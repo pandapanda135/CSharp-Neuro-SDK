@@ -24,7 +24,7 @@
     <ItemGroup>
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4" />
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4-beta1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="NeuroSDKCsharp">

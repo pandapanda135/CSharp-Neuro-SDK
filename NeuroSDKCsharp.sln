@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuroSDKCsharp", "NeuroSDKCsharp\NeuroSDKCsharp.csproj", "{893C7D56-4A5A-4580-8AFA-3382BC866468}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{DD11DAC5-81DA-4F63-A1D5-558AB32115C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SdkTest", "Sdk-Test\Sdk-Test.csproj", "{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}"
 EndProject
@@ -15,10 +15,11 @@ Global
 		{893C7D56-4A5A-4580-8AFA-3382BC866468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{893C7D56-4A5A-4580-8AFA-3382BC866468}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{893C7D56-4A5A-4580-8AFA-3382BC866468}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{893C7D56-4A5A-4580-8AFA-3382BC866468}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05DF0A77-3B8E-4934-B6C7-1AC751A084D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD11DAC5-81DA-4F63-A1D5-558AB32115C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD11DAC5-81DA-4F63-A1D5-558AB32115C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD11DAC5-81DA-4F63-A1D5-558AB32115C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal
