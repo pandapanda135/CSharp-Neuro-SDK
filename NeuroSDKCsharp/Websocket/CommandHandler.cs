@@ -35,7 +35,7 @@ public sealed class CommandHandler
 
                 if (!validationResult.Successful)
                 {
-                    Logger.Warning("Unsuccessful execution result when handling message");
+                    Logger.Warning($"Unsuccessful execution result when handling, message: {validationResult.Message}");
                 }
             
                 handler.ReportResult(resultData, validationResult);

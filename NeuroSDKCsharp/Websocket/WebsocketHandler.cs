@@ -7,10 +7,22 @@ using Newtonsoft.Json.Linq;
 
 namespace NeuroSDKCsharp.Websocket;
 
+public class CharacterMetadata
+{
+    public CharacterMetadata(string characterInfo, string displayName)
+    {
+        CharacterInfo = characterInfo;
+        DisplayName = displayName;
+    }
+
+    public string CharacterInfo;
+    public string DisplayName;
+}
+
 public class WebsocketHandler
 {
     private bool _tryingReconnect;
-    private const float ReconnectInterval = 30;
+    private const float ReconnectInterval = 5;
     
     private static WebsocketHandler? _instance;
 
@@ -21,6 +33,7 @@ public class WebsocketHandler
         _commandHandler = new CommandHandler();
         _uriString = uriString;
     }
+
     public static WebsocketHandler? Instance
     {
         get
@@ -36,6 +49,9 @@ public class WebsocketHandler
     public readonly string GameName; // will be used for Messages
     private readonly MessageQueue _messageQueue;
     private readonly CommandHandler _commandHandler;
+    private CharacterMetadata? Character { get; set; }
+
+    public event EventHandler<CharacterMetadata> OnCharacterChanged;
 
     private string? _uriString; // this will be changed to be able to be changed through file in future
     public async void Initialize()
@@ -251,5 +267,11 @@ public class WebsocketHandler
         
         Dictionary<string, object> dataDictionary = new Dictionary<string, object>{{"message", message},{"command",command},{"data",data}};
         return dataDictionary;
+    }
+
+    public void SetCharacterMetadata(CharacterMetadata metadata)
+    {
+        Character = metadata;
+        OnCharacterChanged.Invoke(this, Character);
     }
 }
