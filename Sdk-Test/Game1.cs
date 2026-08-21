@@ -1,7 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeuroSDKCsharp;
+using NeuroSDKCsharp.Extensions.VoiceChat;
 using NeuroSDKCsharp.Messages.Outgoing;
 using NeuroSDKCsharp.Websocket;
 
@@ -24,13 +28,24 @@ public class Game1 : Game
         _graphics.PreferredBackBufferWidth = 1920;
 
         _graphics.IsFullScreen = true;
+        
+        // Don't load any sound effects
+        SoundEffect.Initialize();
     }
 
     protected override void Initialize()
     {
         _gameInformation = new GameInformation(this);
 
-        SdkSetup.Initialize(this,"MonoGame-Test","ws://localhost:8000");
+        SdkSetup.Initialize(this,"MonoGameTest","ws://localhost:8000");
+        SdkSetup.ConnectVoiceChat("ws://localhost:8080");
+        if (NeuroVoiceChat.Instance != null)
+        {
+            NeuroVoiceChat.Instance.OnAudioReceived += OnAudioReceived;
+            NeuroVoiceChat.Instance.OnSpeakingStateChanged += OnSpeakingStateChanged;
+            NeuroVoiceChat.Instance.OnSpeechCancelled += OnSpeechCancelled;
+        }
+        
         
         base.Initialize();
         if (WebsocketHandler.Instance != null)
@@ -108,6 +123,32 @@ public class Game1 : Game
         
         _spriteBatch.End();
         base.Draw(gameTime);
+    }
+    
+    private void OnAudioReceived(object sender, MemoryStream e)
+    {
+        if (NeuroVoiceChat.DecodePcm(e) == null) return;
+        
+        string homeFolder = Environment.GetFolderPath(
+            Environment.SpecialFolder.UserProfile);
+
+        string filePath = Path.Combine(homeFolder, "audio.pcm");
+        
+        FileStream file = File.Create(filePath);
+
+        file.Write(e.ToArray(), 0, e.ToArray().Length);
+        Console.WriteLine($"Wrote the audio file to {filePath}");
+    }
+    
+    
+    private void OnSpeechCancelled(object sender, EventArgs e)
+    {
+        Console.WriteLine($"Speech cancelled");
+    }
+
+    private void OnSpeakingStateChanged(object sender, bool e)
+    {
+        Console.WriteLine($"Speaking state changed: {e}");
     }
     
     private void OnCharacterChanged(object sender, CharacterMetadata e)

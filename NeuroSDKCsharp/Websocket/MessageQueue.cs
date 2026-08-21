@@ -5,7 +5,12 @@ namespace NeuroSDKCsharp.Websocket;
 
 public class MessageQueue
 {
-    protected readonly List<OutgoingMessageHandler> Messages = new() { new Startup() };
+    public MessageQueue(List<OutgoingMessageHandler> messages)
+    {
+        Messages =  new List<OutgoingMessageHandler>(messages);
+    }
+    
+    protected readonly List<OutgoingMessageHandler> Messages;
 
     public virtual int Count
     {

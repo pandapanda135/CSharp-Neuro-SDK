@@ -42,7 +42,7 @@ public sealed class CommandHandler
 
                 if (validationResult.Successful)
                 {
-                    Logger.Info($"CommandHandler validation successful");
+                    Logger.Info($"CommandHandler validation successful: {handler.GetType()}");
                     handler.Execute(resultData);
                 }
             }
