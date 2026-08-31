@@ -25,7 +25,7 @@ public sealed class ActionWindow
         catch (Exception e)
         {
             _createdCorrectly = false;
-            Logger.Error($"Issue with creating action window: {e}");
+            LogHolder.Error($"Issue with creating action window: {e}");
             throw;
         }
     }
@@ -34,7 +34,7 @@ public sealed class ActionWindow
     {
         if (!_createdCorrectly)
         {
-            Logger.Error($"ActionWindow was not created correctly, you should use the Create method");
+            LogHolder.Error($"ActionWindow was not created correctly, you should use the Create method");
         }
     }
 
@@ -56,7 +56,7 @@ public sealed class ActionWindow
     {
         if (CurrentState != State.Building)
         {
-            Logger.Error("Cannot change action window after it has been registered");
+            LogHolder.Error("Cannot change action window after it has been registered");
             return false;
         }
 
@@ -70,13 +70,13 @@ public sealed class ActionWindow
     {
         if (CurrentState != State.Building)
         {
-            Logger.Error("Cannot register action window more than once");
+            LogHolder.Error("Cannot register action window more than once");
             return;
         }
 
         if (_actions.Count == 0)
         {
-            Logger.Error("Cannot register an action window with no actions");
+            LogHolder.Error("Cannot register an action window with no actions");
             return;
         }
 
@@ -126,7 +126,7 @@ public sealed class ActionWindow
         {
             if (action.ActionWindow != this)
             {
-                Logger.Error($"Cannot add action {action.Name} to this action window as it is already in another action window");
+                LogHolder.Error($"Cannot add action {action.Name} to this action window as it is already in another action window");
             }
 
             return this;
@@ -136,7 +136,7 @@ public sealed class ActionWindow
 
         if (_actions.Any(a => a.Name == action.Name))
         {
-            Logger.Error($"Cannot add two action that have the same name. The name was {action.Name}");
+            LogHolder.Error($"Cannot add two action that have the same name. The name was {action.Name}");
             return this;
         }
         
@@ -264,7 +264,7 @@ public sealed class ActionWindow
     public void End()
     {
         if (CurrentState >= State.Ended) return;
-        Logger.Info($"Ending action window");
+        LogHolder.Info($"Ending action window");
         
         NeuroActionHandler.UnregisterActions(_actions);
         _shouldForceFunc = null;

@@ -1,11 +1,15 @@
 using NeuroSDKCsharp.Messages.API;
-using NeuroSDKCsharp.Messages.Outgoing;
 
 namespace NeuroSDKCsharp.Websocket;
 
 public class MessageQueue
 {
-    protected readonly List<OutgoingMessageHandler> Messages = new() { new Startup() };
+    public MessageQueue(List<OutgoingMessageHandler> starterMessages)
+    {
+        Messages = starterMessages;
+    }
+
+    protected readonly List<OutgoingMessageHandler> Messages;
 
     public virtual int Count
     {
