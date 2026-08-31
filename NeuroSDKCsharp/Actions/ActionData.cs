@@ -28,7 +28,7 @@ public class ActionData
         }
         catch (Exception e)
         {
-            Logger.Error($"error with parsing action data: {e}");
+            LogHolder.Error($"error with parsing action data: {e}");
             actionData = null;
             return false;
         }

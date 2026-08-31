@@ -32,6 +32,6 @@ public class VoiceUnavailable : IncomingMessageHandler<VoiceUnavailable.ResultDa
 
 	protected override void Execute(ResultData? incomingData)
 	{
-		Logger.Error($"Issue with voice chat: {incomingData?.Reason}");
+		LogHolder.Error($"Issue with voice chat: {incomingData?.Reason}");
 	}
 }

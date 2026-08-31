@@ -73,7 +73,7 @@ public class Action : IncomingMessageHandler<Action.ResultData>
         }
         catch (Exception e)
         {
-            Logger.Error($"action failed caught {e}");
+            LogHolder.Error($"action failed caught {e}");
 
             return ExecutionResult.Failure("Action Failed Caught");
         }

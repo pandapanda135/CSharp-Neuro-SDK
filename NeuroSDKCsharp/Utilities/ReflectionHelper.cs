@@ -6,7 +6,7 @@ internal static class ReflectionHelpers
     {
         public static IEnumerable<T?> GetAllInDomain<T>()
         {
-            Logger.Info($"Running GetAllInDomain");
+            LogHolder.Info($"Running GetAllInDomain");
 
             // We remove steamworks to stop issues I had
             IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.WebSockets;
 using Microsoft.Xna.Framework;
 using NeuroSDKCsharp.Extensions.VoiceChat.Messages.Outgoing;
@@ -18,7 +19,9 @@ public class NeuroVoiceChat : BaseWebsocket<NeuroVoiceChat>
 
 	public event EventHandler<bool>? OnSpeakingStateChanged;
 	
-	public event EventHandler? OnSpeechCancelled; 
+	public event EventHandler? OnSpeechCancelled;
+
+	private const int SpeakerHeaderSize = 4;
 	
 	/// <summary>
 	/// Sends the byte data of the audio received from the server. You can decode this to the Float32 pcm, with the DecodePcm method.  
@@ -85,12 +88,25 @@ public class NeuroVoiceChat : BaseWebsocket<NeuroVoiceChat>
 		}
 		else
 		{
-			Logger.Error($"Could not find the correct way to format voice websocket URL.");
+			LogHolder.Error($"Could not find the correct way to format voice websocket URL.");
 		}
 		
-		Logger.Info($"Final Voice URI string: {newUrl}");
+		LogHolder.Info($"Final Voice URI string: {newUrl}");
 
 		return newUrl ?? "";
+	}
+
+	public void SendVoiceAudio(Speaker speaker, byte[] voiceData)
+	{
+		// 4 is size of header
+		byte[] header = new byte[SpeakerHeaderSize];
+		header[0] = 0x1;
+		header[1] = 0x0;
+		header[2] = (byte)(speaker.Id & 0xFF);
+		header[3] = (byte)((speaker.Id >> 8) & 0xFF);
+		
+		var data = header.Concat(voiceData).ToArray();
+		_ = WebSocket?.SendAsync(data, WebSocketMessageType.Binary, false, CancellationToken.None);
 	}
 
 	public void RegisterSpeakers(Speaker[] speaker)

@@ -29,27 +29,27 @@ public sealed class CommandHandler
                 catch (Exception e)
                 {
                     validationResult = ExecutionResult.Failure($"Issue with message handling {e.Message}");
-                    Logger.Error($"Error in command handling: {e}");
+                    LogHolder.Error($"Error in command handling: {e}");
                     resultData = null;  
                 }
 
                 if (!validationResult.Successful)
                 {
-                    Logger.Warning($"Unsuccessful execution result when handling, message: {validationResult.Message}");
+                    LogHolder.Warning($"Unsuccessful execution result when handling, message: {validationResult.Message}");
                 }
             
                 handler.ReportResult(resultData, validationResult);
 
                 if (validationResult.Successful)
                 {
-                    Logger.Info($"CommandHandler validation successful: {handler.GetType()}");
+                    LogHolder.Info($"CommandHandler validation successful: {handler.GetType()}");
                     handler.Execute(resultData);
                 }
             }
         }
         catch (Exception e)
         {
-            Logger.Error($"Issue in Handle\n  {e}");
+            LogHolder.Error($"Issue in Handle\n  {e}");
             throw;
         }
         

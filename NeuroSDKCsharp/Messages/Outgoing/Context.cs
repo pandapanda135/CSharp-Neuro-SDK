@@ -21,5 +21,5 @@ public sealed class Context : OutgoingMessageHandler
     private bool _silent;
 
     public static void Send(string message, bool silent = false) =>
-        WebsocketHandler.Instance!.Send(new Context(message, silent));
+        WebsocketHandler.Instance?.Send(new Context(message, silent));
 }

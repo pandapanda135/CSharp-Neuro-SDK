@@ -1,4 +1,5 @@
 using NeuroSDKCsharp.Messages.API;
+using NeuroSDKCsharp.Utilities;
 using NeuroSDKCsharp.Websocket;
 using Newtonsoft.Json.Linq;
 
@@ -49,7 +50,11 @@ public class Startup : IncomingMessageHandler<Startup.ResultData>
 
 	protected override void Execute(ResultData? incomingData)
 	{
-		if (incomingData == null) return;
+		if (incomingData == null)
+		{
+			LogHolder.Error($"Couldn't get Startup data.");
+			return;
+		}
 
 		WebsocketHandler.Instance?.SetCharacterMetadata(
 			new CharacterMetadata(incomingData.CharacterId, incomingData.DisplayName));

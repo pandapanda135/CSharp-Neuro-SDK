@@ -38,14 +38,14 @@ public class Game1 : Game
         _gameInformation = new GameInformation(this);
 
         SdkSetup.Initialize(this,"MonoGameTest","ws://localhost:8000");
-        SdkSetup.ConnectVoiceChat("ws://localhost:8080");
+        // SdkSetup.ConnectVoiceChat("ws://localhost:8080");
+        // This will produce an error if voice is not connected.
         if (NeuroVoiceChat.Instance != null)
         {
             NeuroVoiceChat.Instance.OnAudioReceived += OnAudioReceived;
             NeuroVoiceChat.Instance.OnSpeakingStateChanged += OnSpeakingStateChanged;
             NeuroVoiceChat.Instance.OnSpeechCancelled += OnSpeechCancelled;
         }
-        
         
         base.Initialize();
         if (WebsocketHandler.Instance != null)
@@ -153,6 +153,7 @@ public class Game1 : Game
     
     private void OnCharacterChanged(object sender, CharacterMetadata e)
     {
+        Console.WriteLine($"Character changed: {e.DisplayName}");
         _currentCharacter = e;
     }
 }

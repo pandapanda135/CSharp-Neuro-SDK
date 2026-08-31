@@ -19,6 +19,11 @@ public static class SdkSetup
 	/// </param>
 	public static void Initialize(Game gameClass, string game, string uriString)
 	{
+		if (LogHolder.Logger is null)
+		{
+			LogHolder.SetLogger(new ConsoleLogger());
+		}
+		
 		TaskDispatcher.Initialize();
 		_ = new WebsocketHandler(gameClass, game, uriString);
 
@@ -35,5 +40,13 @@ public static class SdkSetup
 		
 		WebsocketHandler instance = WebsocketHandler.Instance;
 		_ = new NeuroVoiceChat(instance.Game, instance.GameName, uriString);
+	}
+
+	/// <summary>
+	/// Replace the default Console.WriteLine based logging approach with your own. This should be called before initializing the base SDK via Initialize.  
+	/// </summary>
+	public static void InitializeLogger(BaseLogger logger)
+	{
+		LogHolder.Logger = logger;
 	}
 }

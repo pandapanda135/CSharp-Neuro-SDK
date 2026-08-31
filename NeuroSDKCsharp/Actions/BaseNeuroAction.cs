@@ -47,7 +47,7 @@ public abstract class BaseNeuroAction : INeuroAction
         {
             if (ActionWindow != actionWindow)
             {
-                Logger.Error("Cannot set the action window for this action as it is already set");
+                LogHolder.Error("Cannot set the action window for this action as it is already set");
             }
             
             return;

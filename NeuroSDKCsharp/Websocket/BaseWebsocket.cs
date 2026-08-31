@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -42,7 +43,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
     {
         get
         {
-            if (_instance is null) Logger.Error("WebsocketHandlerInstance was accessed without an instance being present");
+            if (_instance is null) LogHolder.Error($"Websocket was accessed without an instance being present: {new StackTrace()}");
             return _instance;
         }
         private set => _instance = value;
@@ -65,7 +66,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         }
         catch (Exception e)
         {
-            Logger.Error($"issue in initialize: {e}");
+            LogHolder.Error($"issue in initialize: {e}");
         }
     }
 
@@ -87,7 +88,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         }
         catch (Exception e)
         {
-            Logger.Error($"issue with closing websocket if already open: {e}");
+            LogHolder.Error($"issue with closing websocket if already open: {e}");
             throw;
         }
 
@@ -95,7 +96,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         
         if (UriString is null or "")
         {
-            Logger.Error("Could not get websocket URL. You need to set the NEURO_SDK_WS_URL environment variable");
+            LogHolder.Error("Could not get websocket URL. You need to set the NEURO_SDK_WS_URL environment variable");
             return;
         }
         
@@ -109,7 +110,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
             ConnectTask = WebSocket.ConnectAsync(websocketUri, CancellationToken.None);
             ConnectTask.Wait();
 
-            Logger.Info($"Starting Task    Websocket state: {WebSocket.State}");
+            LogHolder.Info($"Starting Task    Websocket state: {WebSocket.State}");
             OnConnect.Invoke(this, EventArgs.Empty);
             
             _ = ReceiveMessage();
@@ -119,7 +120,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         {
             if (e is WebSocketException we && we.WebSocketErrorCode is WebSocketError.Faulted)
             {
-                Logger.Error($"Error code is {we.WebSocketErrorCode}  message: {we.Message}  error code: {we.ErrorCode}");
+                LogHolder.Error($"Error code is {we.WebSocketErrorCode}  message: {we.Message}  error code: {we.ErrorCode}");
                 _ = Reconnect();
             }
         }
@@ -131,7 +132,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         
         string message = JsonSerialize.Serialize(wsMessage);
         
-        Logger.Info($"Sending the Ws Message {message}");
+        LogHolder.Info($"Sending the Ws Message {message}");
 
         var sendBytes = Encoding.UTF8.GetBytes(message);
         
@@ -141,7 +142,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         }
         catch (Exception e)
         {
-            Logger.Error($"error when sending message: {e}");
+            LogHolder.Error($"error when sending message: {e}");
             MessageQueue.Enqueue(handler);
         }
     }
@@ -156,10 +157,10 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         
         if (WebSocket.State is not WebSocketState.Open)
         {
-            Logger.Error($"Websocket is not open. Could not send message: {message}");
+            LogHolder.Error($"Websocket is not open. Could not send message: {message}");
         }
 
-        Logger.Info($"Sending Immediate message {message}");
+        LogHolder.Info($"Sending Immediate message {message}");
 
         var sendBytes = Encoding.UTF8.GetBytes(message);
         await WebSocket!.SendAsync(sendBytes, WebSocketMessageType.Text, false, CancellationToken.None);
@@ -167,7 +168,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
 
     private async Task ReceiveMessage()
     {
-        Logger.Info("Start of ReceiveMessage");
+        LogHolder.Info("Start of ReceiveMessage");
 
         if (WebSocket is null) return;
         
@@ -183,11 +184,11 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
                 memoryStream.Write(buffer,0,result.Count);
             } while (!result.EndOfMessage);
             
-            Logger.Info($"Receive message result: {result} || {result.MessageType}  || {result.CloseStatus}");
+            LogHolder.Info($"Receive message result: {result} || {result.MessageType}  || {result.CloseStatus}");
             
             if (result.MessageType == WebSocketMessageType.Close)
             {
-                Logger.Warning("Server closed connection.");
+                LogHolder.Warning("Server closed connection.");
                 await WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
                 break;
             }
@@ -206,12 +207,12 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         GetMessage(messageData);
     }
 
-    public async void Update()
+    public override async void Update(GameTime gameTime)
     {
         TaskDispatcher.RunPending();
         if (ConnectTask is not null && ConnectTask.IsCompleted)
         {
-            Logger.Info(ConnectTask.IsFaulted ? $"Issue with connecting. Exception was: {ConnectTask.Exception}.\nTrying again." : "Connected successfully!");
+            LogHolder.Info(ConnectTask.IsFaulted ? $"Issue with connecting. Exception was: {ConnectTask.Exception}.\nTrying again." : "Connected successfully!");
 
             TryingReconnect = false;
             ConnectTask = null;
@@ -238,7 +239,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         }
         catch (Exception e)
         {
-            Logger.Error($"Issue in update of ws: {e}");
+            LogHolder.Error($"Issue in update of ws: {e}");
         }
     }
     
@@ -251,13 +252,13 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         }
         catch (Exception e)
         {
-            Logger.Error($"Error in GetMessage try   {e}");
+            LogHolder.Error($"Error in GetMessage try   {e}");
         }
     }
 
     public Dictionary<string, object> ProcessJsonMessage(string messageData)
     {
-        Logger.Info($"Processing JSON message: {messageData}");
+        LogHolder.Info($"Processing JSON message: {messageData}");
         JObject message = JObject.Parse(messageData);
         
         string? command = message["command"]?.Value<string>();
@@ -265,7 +266,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
 
         if (command is null)
         {
-            Logger.Warning("Received command that could not be deserialized.");
+            LogHolder.Warning("Received command that could not be deserialized.");
             return new();
         }
         
@@ -281,7 +282,7 @@ public abstract class BaseWebsocket<T> : GameComponent where T : BaseWebsocket<T
         newUrl = Environment.GetEnvironmentVariable("NEURO_SDK_WS_URL", EnvironmentVariableTarget.Process) ??
                  Environment.GetEnvironmentVariable("NEURO_SDK_WS_URL", EnvironmentVariableTarget.User) ??
                  Environment.GetEnvironmentVariable("NEURO_SDK_WS_URL", EnvironmentVariableTarget.Machine);
-        Logger.Info($"Uri string found by environment variables: {newUrl}");
+        LogHolder.Info($"Uri string found by environment variables: {newUrl}");
 
         return newUrl ?? "";
     }

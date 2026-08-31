@@ -39,6 +39,6 @@ public class VoiceReady : IncomingMessageHandler<VoiceReady.ResultData>
 
 	protected override void Execute(ResultData? incomingData)
 	{
-		Logger.Info($"Server is ready for data: {incomingData?.Channels}   {incomingData?.SampleRate}");
+		LogHolder.Info($"Server is ready for data: {incomingData?.Channels}   {incomingData?.SampleRate}");
 	}
 }
